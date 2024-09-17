@@ -1,16 +1,9 @@
 # tekkersapp
 
-A new Flutter project.
+V2 of Tekkers.
 
-## Getting Started
+This project was made for an internship but will later be used as a personal project.
 
-This project is a starting point for a Flutter application.
+API was used from https://www.football-data.org.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The API grants access to specific information, otherwise a subscription grants you access to all information.
