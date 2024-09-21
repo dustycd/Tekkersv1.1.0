@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "167879576764",
+    "project_id": "tekk-d2ef1",
+    "storage_bucket": "tekk-d2ef1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:167879576764:android:a7c3336b8b33660a6054b9",
+        "android_client_info": {
+          "package_name": "com.example.tekkers"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUgXUeaGB3GDHgkqvugandJBf3MPBmnlk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:167879576764:android:ca92cb7adde32f306054b9",
+        "android_client_info": {
+          "package_name": "com.example.tekkersapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUgXUeaGB3GDHgkqvugandJBf3MPBmnlk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

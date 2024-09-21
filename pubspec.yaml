@@ -45,6 +45,8 @@ dependencies:
   flutter_dotenv: ^5.1.0
   url_launcher: ^6.3.0
   shared_preferences: ^2.3.2
+  auth0_flutter: ^1.7.2
+  flutter_secure_storage: ^9.2.2
   
 
 dev_dependencies:
@@ -64,6 +66,8 @@ flutter:
   assets:
     - assets/tekkersicon.png
     - assets/field.png
+    - assets/images/apple.png
+    - assets/images/google.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
