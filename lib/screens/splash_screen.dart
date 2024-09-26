@@ -16,7 +16,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // Navigate to HomeScreen after 2 seconds
     Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) { // Ensure the widget is still mounted
+      if (mounted) {
+        // Ensure the widget is still mounted
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => const MainScreen(),
@@ -29,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 31, 28, 28), // Dark background color
+      backgroundColor: Colors.black, // Dark background color
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

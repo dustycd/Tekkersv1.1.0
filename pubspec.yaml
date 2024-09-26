@@ -45,15 +45,20 @@ dependencies:
   flutter_dotenv: ^5.1.0
   url_launcher: ^6.3.0
   shared_preferences: ^2.3.2
-  auth0_flutter: ^1.7.2
   flutter_secure_storage: ^9.2.2
+  google_sign_in: ^6.2.1
+  sign_in_with_apple: ^6.1.2
+  logging: ^1.2.0
+  html: ^0.15.4
+  flutter_staggered_animations: ^1.1.1
+ 
   
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
-  flutter_launcher_icons: ^0.13.1  # Latest version
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.1  # Latest version
   
 
 
@@ -104,5 +109,5 @@ flutter:
 flutter_launcher_icons:
   android: true  # Enable Android icon generation
   ios: true      # Enable iOS icon generation
-  image_path: "assets/icon.png"  # Correct path to your app icon
+  image_path: "assets/tekkersicon.png" 
 

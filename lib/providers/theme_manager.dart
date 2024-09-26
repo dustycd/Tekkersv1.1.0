@@ -1,31 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemeManager extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.light;
+class ThemeManager with ChangeNotifier {
+  ThemeData _themeData;
 
-  ThemeMode get themeMode => _themeMode;
+  ThemeManager(this._themeData);
 
-  ThemeManager() {
-    _loadThemeFromPrefs();
-  }
+  ThemeData get themeData => _themeData;
 
-  void setTheme(ThemeMode themeMode) {
-    _themeMode = themeMode;
-    _saveThemeToPrefs();
+  setTheme(ThemeData theme) async {
+    _themeData = theme;
     notifyListeners();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('theme', theme == ThemeData.light() ? 'light' : 'dark');
   }
 
-  void _saveThemeToPrefs() async {
+  Future<void> loadTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('theme', _themeMode == ThemeMode.light ? 'light' : 'dark');
-  }
-
-  void _loadThemeFromPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? theme = prefs.getString('theme');
-    if (theme != null) {
-      _themeMode = theme == 'light' ? ThemeMode.light : ThemeMode.dark;
+    String? savedTheme = prefs.getString('theme');
+    if (savedTheme != null) {
+      _themeData = savedTheme == 'light' ? ThemeData.light() : ThemeData.dark();
+    } else {
+      _themeData = ThemeData.light(); // Default to light theme
     }
     notifyListeners();
   }

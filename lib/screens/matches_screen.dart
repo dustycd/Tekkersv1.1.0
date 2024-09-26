@@ -4,7 +4,9 @@ import 'package:tekkers/providers/match_provider.dart';
 import 'package:tekkers/models/match.dart';
 import 'package:tekkers/models/stand.dart';
 import 'package:intl/intl.dart';
-import 'package:cached_network_image/cached_network_image.dart'; // For image caching
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tekkers/screens/match_details_screen.dart';
+import 'team_profile_screen.dart';
 
 class MatchesScreen extends StatefulWidget {
   final int competitionId;
@@ -74,20 +76,20 @@ class _MatchesScreenState extends State<MatchesScreen>
         title: Text(
           widget.competitionName,
           style: const TextStyle(
-            color: Colors.black,
+            color: Colors.grey,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.transparent, // Transparent AppBar background
+        backgroundColor: Colors.black, // Transparent AppBar background
         elevation: 0, // Remove shadow
         iconTheme:
-            const IconThemeData(color: Colors.black), // Back button color
+            const IconThemeData(color: Colors.white), // Back button color
         bottom: TabBar(
           controller: _tabController,
-          labelColor: Colors.black, // Highlighted tab color
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: Colors.black, // Tab underline
+          labelColor: Colors.white, // Highlighted tab color
+          unselectedLabelColor: Colors.white,
+          indicatorColor: Colors.white, // Tab underline
           tabs: const [
             Tab(text: 'Overview'),
             Tab(text: 'Table'),
@@ -104,11 +106,7 @@ class _MatchesScreenState extends State<MatchesScreen>
               fit: BoxFit.cover,
             ),
           ),
-          // Semi-transparent overlay
-          Container(
-            color: Colors.white.withOpacity(0.8),
-          ),
-          // Content
+
           TabBarView(
             controller: _tabController,
             children: [
@@ -184,7 +182,12 @@ class _MatchesScreenState extends State<MatchesScreen>
         children: [
           Text(
             'Competition Overview',
-            style: Theme.of(context).textTheme.titleLarge,
+             style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+            ),
           ),
           const SizedBox(height: 16),
           Card(
@@ -209,7 +212,12 @@ class _MatchesScreenState extends State<MatchesScreen>
           // Add more overview content as needed, e.g., recent match results
           Text(
             'Recent Matches',
-            style: Theme.of(context).textTheme.titleLarge,
+             style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+            ),
           ),
           const SizedBox(height: 16),
           _buildRecentMatches(matchProvider.matches),
@@ -257,79 +265,167 @@ class _MatchesScreenState extends State<MatchesScreen>
           );
   }
 
-  /// Builds the Standings Table using DataTable for better performance and appearance
-  Widget _buildStandingsTable(List<Standing> standings) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Card(
-        elevation: 3,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columns: const [
-              DataColumn(
-                  label: Text('Pos',
-                      style: TextStyle(fontWeight: FontWeight.bold))),
-              DataColumn(
-                  label: Text('Team',
-                      style: TextStyle(fontWeight: FontWeight.bold))),
-              DataColumn(
-                  label:
-                      Text('P', style: TextStyle(fontWeight: FontWeight.bold))),
-              DataColumn(
-                  label: Text('GD',
-                      style: TextStyle(fontWeight: FontWeight.bold))),
-              DataColumn(
-                  label: Text('Pts',
-                      style: TextStyle(fontWeight: FontWeight.bold))),
-            ],
-            rows: standings
-                .map(
-                  (standing) => DataRow(
-                    cells: [
-                      DataCell(Text('${standing.position}')),
-                      DataCell(
-                        Row(
-                          children: [
-                            standing.teamCrestUrl.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: standing.teamCrestUrl,
-                                    width: 24,
-                                    height: 24,
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(
-                                            strokeWidth: 2),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.sports_soccer,
-                                            size: 24),
-                                  )
-                                : const Icon(Icons.sports_soccer, size: 24),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                standing.teamName,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
+// Builds the Standings Table using DataTable with clickable team logos and names
+Widget _buildStandingsTable(List<Standing> standings) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0), // Reduced padding
+    child: Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SizedBox(
+            // Set a max height if desired, e.g., half the screen height
+            // height: constraints.maxHeight * 0.8,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical, // Enable vertical scrolling
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal, // Enable horizontal scrolling
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                  child: DataTable(
+                    // Reduced column spacing for tighter layout
+                    columnSpacing: 12.0,
+                    dataRowHeight: 36.0, 
+                    headingRowHeight: 40.0,
+                    columns: const [
+                      DataColumn(
+                        label: Text(
+                          'Pos',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
-                      DataCell(Text('${standing.playedGames}')),
-                      DataCell(Text('${standing.goalDifference}')),
-                      DataCell(Text('${standing.points}')),
+                      DataColumn(
+                        label: Text(
+                          'Team',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'P',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'GD',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Pts',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
                     ],
+                    rows: standings.map((standing) {
+                      return DataRow(
+                        cells: [
+                          DataCell(
+                            Text(
+                              '${standing.position}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                          DataCell(
+                            InkWell(
+                              onTap: () {
+                                // Navigate to TeamProfileScreen for the team
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TeamProfileScreen(
+                                      teamId: standing.teamId, // Ensure you have this field
+                                      teamName: standing.teamName,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  standing.teamCrestUrl.isNotEmpty
+                                      ? CachedNetworkImage(
+                                          imageUrl: standing.teamCrestUrl,
+                                          width: 20, // Reduced size
+                                          height: 20, // Reduced size
+                                          placeholder: (context, url) =>
+                                              const SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                ),
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(
+                                                Icons.sports_soccer,
+                                                size: 20,
+                                              ),
+                                        )
+                                      : const Icon(
+                                          Icons.sports_soccer,
+                                          size: 20,
+                                        ),
+                                  const SizedBox(width: 6), // Reduced spacing
+                                  Expanded(
+                                    child: Text(
+                                      standing.teamName,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              '${standing.playedGames}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              '${standing.goalDifference}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              '${standing.points}',
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
                   ),
-                )
-                .toList(),
-            // Optional: Adjust column spacing and data row height for better readability
-            columnSpacing: 16.0,
-            dataRowHeight: 40.0,
-          ),
-        ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
+}
 
   /// Builds the Match List categorized by date
   Widget _buildMatchList(List<Match> matches) {
@@ -381,7 +477,7 @@ class _MatchesScreenState extends State<MatchesScreen>
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: isToday
-                      ? const Color.fromARGB(255, 255, 80, 80)
+                      ? const Color.fromARGB(255, 95, 80, 255)
                       : Colors.black,
                 ),
               ),
@@ -401,109 +497,171 @@ class _MatchesScreenState extends State<MatchesScreen>
     );
   }
 
-  /// Builds an individual match tile with logos, scores, and match status
-  Widget _buildMatchTile(Match match) {
-    String homeTeamName = match.homeTeamName;
-    String awayTeamName = match.awayTeamName;
-    String? homeCrestUrl = match.homeTeamCrestUrl;
-    String? awayCrestUrl = match.awayTeamCrestUrl;
-    String matchStatus = match.status;
-    String scoreHome = match.scoreHome?.toString() ?? '-';
-    String scoreAway = match.scoreAway?.toString() ?? '-';
-    String statusMessage;
+ /// Builds an individual match tile with logos, scores, and match status
+Widget _buildMatchTile(Match match) {
+  String homeTeamName = match.homeTeamName;
+  String awayTeamName = match.awayTeamName;
+  String? homeCrestUrl = match.homeTeamCrestUrl;
+  String? awayCrestUrl = match.awayTeamCrestUrl;
+  String matchStatus = match.status;
+  String scoreHome = match.scoreHome?.toString() ?? '-';
+  String scoreAway = match.scoreAway?.toString() ?? '-';
+  String statusMessage;
 
-    if (matchStatus == 'LIVE' || matchStatus == 'IN_PLAY') {
-      int minutesPlayed =
-          DateTime.now().difference(DateTime.parse(match.utcDate)).inMinutes;
-      statusMessage = '$minutesPlayed\'';
-    } else if (matchStatus == 'PAUSED') {
-      statusMessage = 'HT';
-    } else if (matchStatus == 'FINISHED') {
-      statusMessage = 'FT';
-    } else {
-      statusMessage =
-          DateFormat('h:mm a').format(DateTime.parse(match.utcDate).toLocal());
-    }
+  if (matchStatus == 'LIVE' || matchStatus == 'IN_PLAY') {
+    int minutesPlayed =
+        DateTime.now().difference(DateTime.parse(match.utcDate)).inMinutes;
+    statusMessage = '$minutesPlayed\'';
+  } else if (matchStatus == 'PAUSED') {
+    statusMessage = 'HT';
+  } else if (matchStatus == 'FINISHED') {
+    statusMessage = 'FT';
+  } else {
+    statusMessage =
+        DateFormat('h:mm a').format(DateTime.parse(match.utcDate).toLocal());
+  }
 
-    return Card(
-      color: Colors.white.withOpacity(0.95),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        leading: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              statusMessage,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        title: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
+  return Card(
+    color: Colors.white.withOpacity(0.95),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    elevation: 2,
+    margin: const EdgeInsets.symmetric(vertical: 8.0),
+    child: ListTile(
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      leading: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            statusMessage,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+      title: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    // Navigate to TeamProfileScreen for the home team
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TeamProfileScreen(
+                          teamId: match.homeTeamId,
+                          teamName: match.homeTeamName,
+                        ),
+                      ),
+                    );
+                  },
                   child: Text(
                     homeTeamName,
                     style: const TextStyle(fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 8),
-                _buildTeamLogo(homeCrestUrl),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () {
+                  // Navigate to TeamProfileScreen for the home team
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TeamProfileScreen(
+                        teamId: match.homeTeamId,
+                        teamName: match.homeTeamName,
+                      ),
+                    ),
+                  );
+                },
+                child: _buildTeamLogo(homeCrestUrl),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    // Navigate to TeamProfileScreen for the away team
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TeamProfileScreen(
+                          teamId: match.awayTeamId,
+                          teamName: match.awayTeamName,
+                        ),
+                      ),
+                    );
+                  },
                   child: Text(
                     awayTeamName,
                     style: const TextStyle(fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 8),
-                _buildTeamLogo(awayCrestUrl),
-              ],
-            ),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min, // Ensure minimal space usage
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '$scoreHome',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '$scoreAway',
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(width: 8), // Spacing between score and menu
-            _buildPopupMenu(match),
-          ],
-        ),
-        onTap: () {
-          // Handle tap on the match tile if needed
-        },
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () {
+                  // Navigate to TeamProfileScreen for the away team
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TeamProfileScreen(
+                        teamId: match.awayTeamId,
+                        teamName: match.awayTeamName,
+                      ),
+                    ),
+                  );
+                },
+                child: _buildTeamLogo(awayCrestUrl),
+              ),
+            ],
+          ),
+        ],
       ),
-    );
-  }
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min, // Ensure minimal space usage
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                '$scoreHome',
+                style: const TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '$scoreAway',
+                style: const TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(width: 8), // Spacing between score and menu
+          _buildPopupMenu(match),
+        ],
+      ),
+      onTap: () {
+        // Navigate to MatchDetailsScreen when the match tile is tapped
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MatchDetailsScreen(match: match),
+          ),
+        );
+      },
+    ),
+  );
+}
 
-  /// Builds the popup menu for toggling notifications
+  // Builds the popup menu for toggling notifications
   Widget _buildPopupMenu(Match match) {
     return PopupMenuButton<int>(
       icon: const Icon(Icons.more_vert),
@@ -527,10 +685,9 @@ class _MatchesScreenState extends State<MatchesScreen>
     );
   }
 
-  /// Method to toggle notifications for a match
+  // Method to toggle notifications for a match
   void _toggleNotifications(Match match) async {
-    // Implement your logic to subscribe/unsubscribe to match notifications
-    // For demonstration, we'll toggle subscription using Firebase Messaging
+  // Implement your logic to subscribe/unsubscribe to match notifications
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

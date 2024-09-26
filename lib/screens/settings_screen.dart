@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tekkers/screens/themes_screen.dart';
-import 'package:tekkers/screens/account_settings_screen.dart';
+import 'package:tekkers/screens/login_form_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final themeData = Theme.of(context); // Access theme data from the context
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -14,8 +16,8 @@ class SettingsScreen extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'Roboto',
             fontWeight: FontWeight.bold,
+            fontSize: 18,
             color: Colors.white,
-            fontSize: 16,
           ),
         ),
         backgroundColor: Colors.transparent,
@@ -24,7 +26,7 @@ class SettingsScreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Background Image
+          // Background Image (original look)
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -33,68 +35,96 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
-          // Semi-transparent overlay for better readability
+          // Semi-transparent overlay for better readability (no change in color based on theme)
           Container(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withOpacity(0.6),
           ),
           // SafeArea to avoid system UI overlaps
           SafeArea(
-            child: ListView(
-              padding: const EdgeInsets.only(top: 20),
-              children: [
-                // Account Settings
-                Container(
-                  color: Colors.white, // White background for each option
-                  child: ListTile(
-                    leading: const Icon(Icons.person, color: Colors.black), // Icon in black
-                    title: const Text(
-                      'Account',
-                      style: TextStyle(
-                        color: Colors.black, // Text in black
-                      ),
-                    ),
-                    trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView(
+                children: [
+                  // Account Settings
+                  _buildSettingsOption(
+                    context: context,
+                    icon: Icons.person,
+                    title: 'Account',
+                    subtitle: 'Manage your account settings',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const AccountSettingsScreen(),
+                          builder: (context) => LoginPage(),
                         ),
                       );
                     },
                   ),
-                ),
-                const Divider(color: Colors.white70),
 
-                // Themes Settings
-                Container(
-                  color: Colors.white,
-                  child: ListTile(
-                    leading: const Icon(Icons.color_lens, color: Colors.black),
-                    title: const Text(
-                      'Themes',
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                    trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black),
+                  const SizedBox(height: 10),
+
+                  // Themes Settings
+                  _buildSettingsOption(
+                    context: context,
+                    icon: Icons.color_lens,
+                    title: 'Themes',
+                    subtitle: 'Choose your theme',
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ThemesScreen(),
+                          builder: (context) => ThemesScreen(),
                         ),
                       );
                     },
                   ),
-                ),
-                const Divider(color: Colors.white70),
 
-                // Additional settings can go here...
-              ],
+                  const SizedBox(height: 10),
+
+                  // Add more settings options here...
+                ],
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // A reusable method to create each settings option card
+  Widget _buildSettingsOption({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    final themeData = Theme.of(context); // Access theme data within the method
+
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      elevation: 3,
+      child: ListTile(
+        leading: Icon(icon, color: themeData.iconTheme.color, size: 30),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: themeData.textTheme.bodyLarge?.color,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(
+            fontSize: 14,
+            color: themeData.textTheme.bodyMedium?.color,
+          ),
+        ),
+        trailing: Icon(Icons.arrow_forward_ios, color: themeData.iconTheme.color),
+        onTap: onTap,
       ),
     );
   }

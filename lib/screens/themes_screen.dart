@@ -7,51 +7,101 @@ class ThemesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeManager = Provider.of<ThemeManager>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Themes'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const Text('Select a Theme'),
-            const SizedBox(height: 16),
-            GridView.count(
-              shrinkWrap: true,
-              crossAxisCount: 2,
-              children: [
-                _themeButton(context, 'Default', Colors.blue, Colors.white, ThemeMode.light),
-                _themeButton(context, 'Dark Theme', Colors.black, Colors.white, ThemeMode.dark),
-              ],
-            ),
-          ],
+        title: const Text(
+          'Themes',
+          style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 18,
+          ),
         ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      extendBodyBehindAppBar: true,
+      body: Stack(
+        children: [
+          // Background Image (consistent with SettingsScreen)
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/field.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          // Semi-transparent overlay for better readability
+          Container(
+            color: Colors.black.withOpacity(0.6),
+          ),
+          // SafeArea to avoid system UI overlaps
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListView(
+                children: [
+                  // Light Theme Option
+                  ThemeOptionCard(
+                    icon: Icons.wb_sunny,
+                    title: 'Light Theme',
+                    onTap: () => themeManager.setTheme(ThemeData.light()),
+                  ),
+                  const SizedBox(height: 10),
+                  // Dark Theme Option
+                  ThemeOptionCard(
+                    icon: Icons.nights_stay,
+                    title: 'Dark Theme',
+                    onTap: () => themeManager.setTheme(ThemeData.dark()),
+                  ),
+                  const SizedBox(height: 10),
+                  // Add more theme options here
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+}
 
-  Widget _themeButton(BuildContext context, String label, Color color1, Color color2, ThemeMode themeMode) {
-    return GestureDetector(
-      onTap: () {
-        // Apply the theme via ThemeManager
-        Provider.of<ThemeManager>(context, listen: false).setTheme(themeMode);
-        Navigator.pop(context);  // Return to the previous screen after theme selection
-      },
-      child: Container(
-        margin: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [color1, color2],
+// A reusable card widget for theme selection options
+class ThemeOptionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final VoidCallback onTap;
+
+  const ThemeOptionCard({
+    Key? key,
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final themeData = Theme.of(context);
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      elevation: 3,
+      child: ListTile(
+        leading: Icon(icon, color: themeData.iconTheme.color, size: 30),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: themeData.textTheme.bodyLarge?.color,
           ),
-          borderRadius: BorderRadius.circular(8),
         ),
-        child: Center(
-          child: Text(
-            label,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-        ),
+        onTap: onTap,
       ),
     );
   }

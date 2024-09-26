@@ -10,6 +10,7 @@ class Standing {
   final int goalsFor;
   final int goalsAgainst;
   final int goalDifference;
+  final int teamId;
 
   Standing({
     required this.position,
@@ -23,6 +24,7 @@ class Standing {
     required this.goalsFor,
     required this.goalsAgainst,
     required this.goalDifference,
+    required this.teamId,
   });
 
   factory Standing.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,8 @@ class Standing {
       goalsFor: json['goalsFor'],
       goalsAgainst: json['goalsAgainst'],
       goalDifference: json['goalDifference'],
+      teamId: json['team']['id'] as int,
     );
   }
 }
+

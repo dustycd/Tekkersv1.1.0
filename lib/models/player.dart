@@ -1,3 +1,5 @@
+// lib/models/player.dart
+
 class Player {
   final int id;
   final String name;
@@ -23,9 +25,9 @@ class Player {
       name: json['name'] ?? 'Unknown Player',
       position: json['position'] ?? 'N/A',
       nationality: json['nationality'] ?? 'N/A',
-      teamName: json['team'] ?? 'Unknown Team',
-      photoUrl: json['imageUrl'] ?? 'https://example.com/default-image.png',
-      goals: json['goals'] ?? 0,
+      teamName: json['currentTeam']?['name'] ?? 'Unknown Team',
+      photoUrl: json['photoUrl'] ?? '', // Adjust the key based on API response
+      goals: json['goals'] ?? 0, // Update or remove based on available data
     );
   }
 }

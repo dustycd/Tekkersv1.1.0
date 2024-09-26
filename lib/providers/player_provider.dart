@@ -1,38 +1,37 @@
+// lib/providers/player_provider.dart
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:tekkers/models/player.dart';
 
 class PlayerProvider with ChangeNotifier {
-  List<dynamic> _players = [];
-  final List<dynamic> _followedPlayers = [];
+  final String apiKey = 'b373e81675174781839c2a00b33385b0';
+  Map<int, Player> _players = {}; // Map of playerId to Player object
 
-  List<dynamic> get players => _players;
-  List<dynamic> get followedPlayers => _followedPlayers;
+  Map<int, Player> get players => _players;
 
-  PlayerProvider() {
-    fetchPlayers(); // Fetch the players when the provider is initialized
-  }
-
-  Future<void> fetchPlayers() async {
+  Future<void> fetchPlayer(int playerId) async {
+    if (_players.containsKey(playerId)) {
+      return; // Player data already fetched
+    }
     try {
       final response = await http.get(
-        Uri.parse('https://api.football-data.org/v4/players'), // Replace with correct endpoint
+        Uri.parse('https://api.football-data.org/v4/persons/$playerId'),
         headers: {
-          'X-Auth-Token': 'b373e81675174781839c2a00b33385b0', // Your API key
+          'X-Auth-Token': apiKey,
         },
       );
       if (response.statusCode == 200) {
-        _players = jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+        Player player = Player.fromJson(data);
+        _players[playerId] = player;
         notifyListeners();
       } else {
-        throw Exception('Failed to load players');
+        throw Exception('Failed to load player data');
       }
     } catch (error) {
-      print('Error fetching players: $error');
+      print('Error fetching player $playerId: $error');
     }
-  }
-
-  Future<void> loadFollowedPlayers() async {
-    // Logic for loading followed players can be added here
   }
 }

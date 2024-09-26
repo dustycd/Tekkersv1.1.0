@@ -248,7 +248,7 @@ class _NewsScreenState extends State<NewsScreen> {
                                             icon: const Icon(Icons.link, size: 16),
                                             label: const Text('Read more'),
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.blueAccent,
+                                              backgroundColor: Colors.black,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.circular(30),
                                               ),

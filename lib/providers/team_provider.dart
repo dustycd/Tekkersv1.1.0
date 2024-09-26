@@ -1,55 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:tekkers/models/team.dart';
 
 class TeamProvider with ChangeNotifier {
-  List<Team> _teams = [];  // List of teams using the Team model
+  List<Team> _teams = [];
   bool _isLoading = false;
   String? _errorMessage;
 
-  List<Team> get teams => _teams;  // Return a list of Team objects
+  List<Team> get teams => _teams;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // Get a team by its ID
-  Team? getTeamById(int id) {
-    try {
-      return _teams.firstWhere((team) => team.id == id);
-    } catch (e) {
-      return null;  // Return null if no team is found
-    }
-  }
-
-  // Constructor to automatically fetch teams
-  TeamProvider() {
-    fetchTeams();  // Automatically load teams when the provider is initialized
-  }
-
-  // Fetch teams from an API
   Future<void> fetchTeams() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
-    try {
-      final response = await http.get(
-        Uri.parse('https://api.football-data.org/v4/teams'),  // Correct API endpoint
-        headers: {
-          'X-Auth-Token': 'b373e81675174781839c2a00b33385b0',  // Your API key
-        },
-      );
+    List<String> competitionCodes = [
+      'PL', 'BL1', 'SA', 'PD', 'FL1', 'CL', 'ELC', 'PPL', 'DED', 'BSA', 'MLS', 'RFPL', 'SPL', 'EC', 'WC'
+    ];
 
-      if (response.statusCode == 200) {
-        List<dynamic> data = jsonDecode(response.body)['teams'];
-        _teams = data.map((teamJson) => Team.fromJson(teamJson)).toList();  // Map API data to Team model
-      } else {
-        throw Exception('Failed to load teams');
+    List<Team> allTeams = [];
+
+    try {
+      for (String code in competitionCodes) {
+        final response = await http.get(
+          Uri.parse('https://api.football-data.org/v4/competitions/$code/teams'),
+          headers: {'X-Auth-Token': 'b373e81675174781839c2a00b33385b0'},
+        );
+
+        if (response.statusCode == 200) {
+          List<dynamic> data = jsonDecode(response.body)['teams'];
+          List<Team> teams = data.map((teamJson) => Team.fromJson(teamJson)).toList();
+          allTeams.addAll(teams);
+        } else if (response.statusCode == 429) {
+          _errorMessage = 'API rate limit exceeded. Please try again later.';
+          throw Exception(_errorMessage);
+        } else {
+          _errorMessage = 'Failed to load teams for competition $code with status code ${response.statusCode}';
+          throw Exception(_errorMessage);
+        }
+
+        // Delay to mitigate rate limit risks
+        await Future.delayed(const Duration(milliseconds: 500));
       }
+
+      // Deduplicate teams based on unique ID
+      _teams = { for (var team in allTeams) team.id : team }.values.toList();
     } catch (error) {
       _errorMessage = 'Error loading teams: $error';
-      print(_errorMessage);
+      print(_errorMessage);  // Consider logging to a remote server in production apps
     } finally {
       _isLoading = false;
       notifyListeners();
