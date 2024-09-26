@@ -1,6 +1,6 @@
 # tekkersapp
 
-V2 of Tekkers.
+V1.1.0 of Tekkers.
 
 This project was made for an internship but will later be used as a personal project.
 
