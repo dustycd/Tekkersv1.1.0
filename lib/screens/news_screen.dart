@@ -128,7 +128,7 @@ class _NewsScreenState extends State<NewsScreen> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/field.png'), // Ensure the path is correct
+                image: AssetImage('assets/background2.png'), // Ensure the path is correct
                 fit: BoxFit.cover,
               ),
             ),

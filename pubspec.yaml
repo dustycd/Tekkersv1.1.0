@@ -51,6 +51,10 @@ dependencies:
   logging: ^1.2.0
   html: ^0.15.4
   flutter_staggered_animations: ^1.1.1
+  flip_card: ^0.7.0
+  webview_flutter: ^4.9.0
+  diacritic: ^0.1.6
+  string_similarity: ^2.1.1
  
   
 
@@ -73,6 +77,8 @@ flutter:
     - assets/field.png
     - assets/images/apple.png
     - assets/images/google.png
+    - assets/background.png
+    - assets/background2.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

@@ -4,7 +4,7 @@ import 'package:tekkers/components/my_button.dart';
 import 'package:tekkers/components/my_textfield.dart';
 import 'package:tekkers/components/square_tile.dart';
 import 'package:tekkers/screens/account_settings_screen.dart';
-import 'package:tekkers/screens/forgot_password_screen';
+import 'package:tekkers/screens/forgot_password_screen.dart';
 import 'package:tekkers/screens/register_screen.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';

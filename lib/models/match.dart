@@ -12,7 +12,8 @@ class Match {
   final String? awayTeamCrestUrl;
   final int? scoreHome;
   final int? scoreAway;
-  final String leagueName; // Added leagueName field
+  final String leagueName;
+   final int? minute;
 
   Match({
     required this.id,
@@ -26,7 +27,8 @@ class Match {
     this.awayTeamCrestUrl,
     this.scoreHome,
     this.scoreAway,
-    required this.leagueName, // Added leagueName to constructor
+    required this.leagueName,
+    this.minute,
   });
 
   factory Match.fromJson(Map<String, dynamic> json) {
@@ -42,7 +44,8 @@ class Match {
       awayTeamCrestUrl: json['awayTeam']['crest'],
       scoreHome: json['score']['fullTime']['home'],
       scoreAway: json['score']['fullTime']['away'],
-      leagueName: json['competition']['name'], // Parsing leagueName from JSON
+      leagueName: json['competition']['name'],
+      minute: json['minute'],
     );
   }
 }

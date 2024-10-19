@@ -13,7 +13,7 @@ void main() async {
   // Initialize the ThemeManager with the default theme.
   ThemeManager themeManager = ThemeManager(ThemeData.light());
   // Load the theme preference.
-  await themeManager.loadTheme(); 
+  await themeManager.loadTheme();
   runApp(
     MultiProvider(
       providers: [
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
     final themeManager = Provider.of<ThemeManager>(context);
     return MaterialApp(
       title: 'Tekkers',
-      theme: themeManager.themeData,  // Use the theme data from ThemeManager
+      theme: themeManager.themeData, // Use the theme data from ThemeManager
       home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
